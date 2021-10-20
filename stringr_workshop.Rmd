@@ -15,7 +15,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Strings! Numeric value's unruly, difficult, unpopular cousin? We think not! String values play not only an important role in data cleaning, but texts itself are increasingly treated as rich sources of data for research in political science and public policy. So today, we want to dive deeper into how to basics of managing and manipulating strings using the stringR package. 
 
-```{r cars}
+```{r include = TRUE}
+install.packages("stringr")
 library(stringr)
 ```
 
