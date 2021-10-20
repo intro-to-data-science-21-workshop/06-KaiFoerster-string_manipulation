@@ -8,23 +8,23 @@ This repository provides materials for a session that is part of the [I2DS Tools
 
 ### Session contents
 
-This session will introduce you to the modern data wrangling workflow with R and dplyr. Data wrangling is one of the core steps in the data science workflow. dplyr is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges, including the manipulation of datasets and variables. 
+This session will introduce you to the string manipulation package in R called stringr. String manipulations comes in handy in the data wrangling process and when scraping data from the web. stringr is a grammar of string manipulation, providing a consistent set of verbs that help you solve the most common string manipulation challenges. 
 
 ### Main learning objectives
 
-The goals of this session are to (1) equip you with conceptual knowledge about the dplyr package and data wrangling workflow, (2) show you the three key verbs of the pacakge, and (3) provide you with practice material as well as some further readings.
+The goals of this session are to (1) equip you with conceptual knowledge about the stringr package in context of webscraping and data wrangling, (2) familiarise you with the most frequently used verbs of the package, and (3) provide you with practice material as well as some further readings.
 
 
 ## Instructors
 
-- Kai Foerster ([website](http://simonmunzert.github.io/), [twitter](https://twitter.com/simonsaysnothin))
-- Kermit the Frog ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))
+- Kai Foerster ([website](https://github.com/kaifoerster), [twitter](https://twitter.com/kai_foe))
+- Max Eckert ([GitHub](https://github.com/m-b-e), [twitter](https://twitter.com/mabrec1))
 
 
 ## Further resources
 
-- [dplyr overview at dplyr.tidyverse.org](https://dplyr.tidyverse.org/)
-- [Hands-on dplyr tutorial by Data School on YouTube](https://www.youtube.com/watch?v=jWjqLW-u3hc)
+- [Stringr cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/strings.pdf)
+- [Stringr official webpage](https://stringr.tidyverse.org/)
 - [R for Data Science book - part on data wrangling](https://r4ds.had.co.nz/wrangle-intro.html)
 
 
@@ -34,7 +34,7 @@ The material in this repository is made available under the [MIT license](http:/
 
 ## Statement of contributions
 
-**Simon Munzert** prepared the practice material and post-processed the recording.
+**Kai Foerster** prepared the README and post-processed the recording.
 
-**Kermit the Frog** prepared the presentation slides and recording. He also provided an example to the practice material.
+**Max Eckert** prepared the presentation slides and recording. He also provided an example to the practice material.
 
