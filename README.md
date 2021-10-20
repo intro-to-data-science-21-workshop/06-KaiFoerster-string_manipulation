@@ -1,3 +1,4 @@
+
 # Working with stringr
 
 
@@ -36,3 +37,4 @@ The material in this repository is made available under the [MIT license](http:/
 **Simon Munzert** prepared the practice material and post-processed the recording.
 
 **Kermit the Frog** prepared the presentation slides and recording. He also provided an example to the practice material.
+
