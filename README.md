@@ -17,7 +17,7 @@ The goals of this session are to (1) equip you with conceptual knowledge about t
 
 ## Instructors
 
-- Kai Foerster ([website](https://github.com/kaifoerster), [twitter](https://twitter.com/kai_foe))
+- Kai Foerster ([GitHub](https://github.com/kaifoerster), [twitter](https://twitter.com/kai_foe))
 - Max Eckert ([GitHub](https://github.com/m-b-e), [twitter](https://twitter.com/mabrec1))
 
 
@@ -25,7 +25,6 @@ The goals of this session are to (1) equip you with conceptual knowledge about t
 
 - [Stringr cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/strings.pdf)
 - [Stringr official webpage](https://stringr.tidyverse.org/)
-- [R for Data Science book - part on data wrangling](https://r4ds.had.co.nz/wrangle-intro.html)
 
 
 ## License
