@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ![What working with strings can feel like](pics/why-cant-you-just-be-normal.gif){width=300px}
 
 <br>
-Strings! Numeric value's unruly, difficult, unpopular cousin? We think not! String values play not only an important role in data cleaning, but texts itself are increasingly treated as rich sources of data for research in political science and public policy (see here, for example https://journals.sagepub.com/doi/full/10.1177/20531680211022206, or here: https://onlinelibrary.wiley.com/doi/10.1111/padm.12656). So today, we want to dive deeper into how to basics of manipulating strings using the stringR package. 
+Strings! Numeric value's unruly, difficult, unpopular cousin? We think not! String values play not only an important role in data cleaning, but texts itself are increasingly treated as rich sources of data for research in political science and public policy (see here, for example https://journals.sagepub.com/doi/full/10.1177/20531680211022206, or here: https://onlinelibrary.wiley.com/doi/10.1111/padm.12656). So today, we want to dive deeper into how to manipulate strings using the stringR package. 
 <br>
 
 ![StringR to the rescue](pics/Meme_stringR_girl.jpg){width=300px}
@@ -63,11 +63,12 @@ We have the Internet Archive ".../web" followed by a time stamp, and the URL of 
 
 ```{r include=TRUE}
 guardian_split <- guardian_url %>% str_split(pattern = "web/") 
-guardian_split
+url_archive <- guardian_split[[1]][1]
 url_date <- guardian_split[[1]][2]
+url_archive
 url_date
 ```
-We can see that the first four digits are the year, followed by two digits for the month, two for the day, and the remaining 6 for the time of day at which the information was collected (we can disregard the time of day for now). Using the str_sub command, specifying the start and end position in the string, we subset year, month, and day.
+We can see that the first four digits are the year, followed by two digits for the month, two for the day, and the remaining 6 for the time of day at which the information was collected (we can disregard the time of day for now). Using the str_sub command, specifying the start and end position in the string, we subset year, month, and day. (Negative indexing is also possible.)
 
 ```{r}
 url_year <- url_date %>% str_sub(start = 1, end = 4) 
@@ -79,11 +80,25 @@ url_month
 url_day
 ```
 
-If we wanted to replace the information about year, month, and day, we could also use the str_replace function and change the link "manually" by simply assigning a new value.
+If we wanted to replace the information about year, month, or day, we could also use the str_replace function and assign a new value to the positions in the URL.
 
 ```{r}
-url_date_new <- url_date %>% str_replace("20210901", "20210902")
-url_date_new
+str_sub(url_date, start = 7, end = 8) <- '02'
+url_date
+```
 
+Now that we have changed the day of the URL to September 2, 2021 we are merging the two substrings again. Keep in mind that earlier, we separated the URL at 'web/', so we need to add this again to receive a working URL.
+
+```{r}
+new_url <- str_c(url_archive, url_date, sep = "web/")
+new_url
+```
+
+With our new URL, we can now scrape the headlines for the next day's edition of the Guardian newspaper!
+
+```{r}
+guardian_headlines_new <- new_url %>% read_html() %>% 
+rvest::html_nodes(xpath = '//a[contains(concat( " ", @class, " " ), concat( " ", "js-headline-text", " " ))]') %>% rvest::html_text()
+guardian_headlines_new[c(1:5)]
 ```
 
