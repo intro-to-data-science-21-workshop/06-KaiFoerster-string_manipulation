@@ -342,71 +342,339 @@ div.tocify {
 <h2>A Brief Overview</h2>
 <p><br> Most of us already became somewhat familiar with the basic functionality of the stringR package when we used it for the previous assignments. Part of the tidyverse, the stringR package was published in 2019 and is currently running version 1.4.0. <b> All functions in stringr start with “str_” and the first argument within the bracket is always the vector of strings that you want to modify, e.g. str_replace(<i>argument1</i>, …) which comes in handy when using the the pipe to write your code. </b> <br></p>
 </div>
-<div id="table-of-contents" class="section level2">
-<h2>Table of Contents</h2>
+<div id="session-content" class="section level2">
+<h2>Session content</h2>
 <p>In the following document, we want to walk you through the following key functions of the stringR package and some applications:</p>
 <ul>
-<li>Subsetting Strings</li>
-<li>Mutating Strings</li>
-<li>String ordering and sorting</li>
-<li>Joining and Splitting</li>
-<li>Order Strings</li>
+<li>Scraping data from the Guardian website</li>
+<li>Splitting, subsetting and joining strings</li>
+<li>Managing length and order of strings</li>
+<li>Manipulating and mutating strings</li>
 </ul>
+</div>
+<div id="scraping-data-from-the-guardian-website" class="section level2">
+<h2>Scraping data from the Guardian website</h2>
 <p>First, let’s load the necessary packages we’ll need for this exercise:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xml2)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
+## v tibble  3.1.2     v dplyr   1.0.6
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xml2)</span></code></pre></div>
 <p>For the purpose of this workshops we will be working with a tried and trusted data source: newspaper headlines! Thanks to the folks at the Internet Archive (<a href="https://archive.org" class="uri">https://archive.org</a>), we will look at newspaper headlines across different points in time. Below, we can see the link to the Guardian headlines from the first day of classes, September 1, 2021.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>guardian_url <span class="ot">&lt;-</span> <span class="st">&quot;https://web.archive.org/web/20210901040912/https://www.theguardian.com/international&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>guardian_url <span class="ot">&lt;-</span> <span class="st">&quot;https://web.archive.org/web/20210901040912/https://www.theguardian.com/international&quot;</span></span></code></pre></div>
 <p>Let’s extract the newspaper headlines from that day.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>guardian_headlines <span class="ot">&lt;-</span> guardian_url <span class="sc">%&gt;%</span> <span class="fu">read_html</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>rvest<span class="sc">::</span><span class="fu">html_nodes</span>(<span class="at">xpath =</span> <span class="st">&#39;//a[contains(concat( &quot; &quot;, @class, &quot; &quot; ), concat( &quot; &quot;, &quot;js-headline-text&quot;, &quot; &quot; ))]&#39;</span>) <span class="sc">%&gt;%</span> rvest<span class="sc">::</span><span class="fu">html_text</span>()</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>guardian_headlines[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)]</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>guardian_headlines <span class="ot">&lt;-</span> guardian_url <span class="sc">%&gt;%</span> <span class="fu">read_html</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>rvest<span class="sc">::</span><span class="fu">html_nodes</span>(<span class="at">xpath =</span> <span class="st">&#39;//a[contains(concat( &quot; &quot;, @class, &quot; &quot; ), concat( &quot; &quot;, &quot;js-headline-text&quot;, &quot; &quot; ))]&#39;</span>) <span class="sc">%&gt;%</span> rvest<span class="sc">::</span><span class="fu">html_text</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>guardian_headlines[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)]</span></code></pre></div>
 <pre><code>## [1] &quot;Biden calls for new era in US foreign policy in defensive speech&quot;           
 ## [2] &quot;Biden sets himself apart by placing Afghanistan blame at predecessors’ feet&quot;
 ## [3] &quot;Wheelchair basketball, road cycling, badminton begins and more – live!&quot;     
 ## [4] &quot;Father seeking $2m before stepping down as conservator, court filing claims&quot;
 ## [5] &quot;Up to half of world’s wild tree species could be at risk of extinction&quot;</code></pre>
-<p>Nice! What if we wanted to access the headlines of the following day? Let’s take a moment and think about the logic behind the URL: <br> <a href="https://web.archive.org/web/20210901040912/https://www.theguardian.com/international" class="uri">https://web.archive.org/web/20210901040912/https://www.theguardian.com/international</a> <br> We have the Internet Archive “…/web” followed by a time stamp, and the URL of our news source. Let’s split up the string to manipulate time stamp into year, month, date, and time.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>guardian_split <span class="ot">&lt;-</span> guardian_url <span class="sc">%&gt;%</span> <span class="fu">str_split</span>(<span class="at">pattern =</span> <span class="st">&quot;web/&quot;</span>) </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>url_archive <span class="ot">&lt;-</span> guardian_split[[<span class="dv">1</span>]][<span class="dv">1</span>]</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>url_date <span class="ot">&lt;-</span> guardian_split[[<span class="dv">1</span>]][<span class="dv">2</span>]</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>url_archive</span></code></pre></div>
+</div>
+<div id="splitting-subsetting-and-joining-strings" class="section level2">
+<h2>Splitting, subsetting and joining strings</h2>
+<p>Nice! What if we wanted to access the headlines of the following day? Let’s take a moment and think about the logic behind the URL: <br> <a href="https://web.archive.org/web/20210901040912/https://www.theguardian.com/international" class="uri">https://web.archive.org/web/20210901040912/https://www.theguardian.com/international</a> <br> We have the Internet Archive “…/web” followed by a time stamp, and the URL of our news source. Let’s split up the string with str_split into the base part of the url which we call url_archive and the changing part of the url including the date and news source. str_split splits the string into substrings where the splitting pattern occurs and returns a list of substrings. Here we want to split after “web/”, so let us make this our splitting pattern.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>guardian_split <span class="ot">&lt;-</span> guardian_url <span class="sc">%&gt;%</span> <span class="fu">str_split</span>(<span class="at">pattern =</span> <span class="st">&quot;web/&quot;</span>) </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>guardian_split</span></code></pre></div>
+<pre><code>## [[1]]
+## [1] &quot;https://web.archive.org/&quot;                                
+## [2] &quot;20210901040912/https://www.theguardian.com/international&quot;</code></pre>
+<p>We can then store the base part and changing part into into separate strings.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>url_archive <span class="ot">&lt;-</span> guardian_split[[<span class="dv">1</span>]][<span class="dv">1</span>]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>url_date <span class="ot">&lt;-</span> guardian_split[[<span class="dv">1</span>]][<span class="dv">2</span>]</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>url_archive</span></code></pre></div>
 <pre><code>## [1] &quot;https://web.archive.org/&quot;</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>url_date</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>url_date</span></code></pre></div>
 <pre><code>## [1] &quot;20210901040912/https://www.theguardian.com/international&quot;</code></pre>
-<p>We can see that the first four digits are the year, followed by two digits for the month, two for the day, and the remaining 6 for the time of day at which the information was collected (we can disregard the time of day for now). Using the str_sub command, specifying the start and end position in the string, we subset year, month, and day. (Negative indexing is also possible.)</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>url_year <span class="ot">&lt;-</span> url_date <span class="sc">%&gt;%</span> <span class="fu">str_sub</span>(<span class="at">start =</span> <span class="dv">1</span>, <span class="at">end =</span> <span class="dv">4</span>) </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>url_month <span class="ot">&lt;-</span> url_date <span class="sc">%&gt;%</span> <span class="fu">str_sub</span>(<span class="at">start =</span> <span class="dv">5</span>, <span class="at">end =</span> <span class="dv">6</span>) </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>url_day <span class="ot">&lt;-</span> url_date <span class="sc">%&gt;%</span> <span class="fu">str_sub</span>(<span class="at">start =</span> <span class="dv">7</span>, <span class="at">end =</span> <span class="dv">8</span>) </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>url_year</span></code></pre></div>
+<p>We can see that the first four digits are the year, followed by two digits for the month, two for the day, and the remaining 6 for the time of day at which the information was collected (we can disregard the time of day for now).</p>
+<p>Using the str_sub command, specifying the start and end position in the string, we subset year, month, and day. (Negative indexing is also possible.)</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>url_year <span class="ot">&lt;-</span> url_date <span class="sc">%&gt;%</span> <span class="fu">str_sub</span>(<span class="at">start =</span> <span class="dv">1</span>, <span class="at">end =</span> <span class="dv">4</span>) </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>url_month <span class="ot">&lt;-</span> url_date <span class="sc">%&gt;%</span> <span class="fu">str_sub</span>(<span class="at">start =</span> <span class="dv">5</span>, <span class="at">end =</span> <span class="dv">6</span>) </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>url_day <span class="ot">&lt;-</span> url_date <span class="sc">%&gt;%</span> <span class="fu">str_sub</span>(<span class="at">start =</span> <span class="dv">7</span>, <span class="at">end =</span> <span class="dv">8</span>) </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>url_year</span></code></pre></div>
 <pre><code>## [1] &quot;2021&quot;</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>url_month</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>url_month</span></code></pre></div>
 <pre><code>## [1] &quot;09&quot;</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>url_day</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>url_day</span></code></pre></div>
 <pre><code>## [1] &quot;01&quot;</code></pre>
-<p>If we wanted to replace the information about year, month, or day, we could also use the str_replace function and assign a new value to the positions in the URL.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(url_date, <span class="at">start =</span> <span class="dv">7</span>, <span class="at">end =</span> <span class="dv">8</span>) <span class="ot">&lt;-</span> <span class="st">&#39;02&#39;</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>url_date</span></code></pre></div>
+<p>If we wanted to replace the information about year, month, or day, we could use the str_sub or str_replace function and assign a new value to the positions in the URL.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(url_date, <span class="at">start =</span> <span class="dv">7</span>, <span class="at">end =</span> <span class="dv">8</span>) <span class="ot">&lt;-</span> <span class="st">&#39;02&#39;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>url_date</span></code></pre></div>
 <pre><code>## [1] &quot;20210902040912/https://www.theguardian.com/international&quot;</code></pre>
-<p>Now that we have changed the day of the URL to September 2, 2021 we are merging the two substrings again. Keep in mind that earlier, we separated the URL at ‘web/’, so we need to add this again to receive a working URL.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>new_url <span class="ot">&lt;-</span> <span class="fu">str_c</span>(url_archive, url_date, <span class="at">sep =</span> <span class="st">&quot;web/&quot;</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>new_url</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>url_date2 <span class="ot">&lt;-</span> <span class="fu">str_replace</span>(url_date, <span class="st">&quot;01&quot;</span>, <span class="st">&quot;02&quot;</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>url_date2</span></code></pre></div>
+<pre><code>## [1] &quot;20210902040912/https://www.theguardian.com/international&quot;</code></pre>
+<p>Now that we have changed the day of the URL to September 2, 2021 we are merging the two substrings again.We can use str_c for this. Keep in mind that earlier, we separated the URL at ‘web/’, so we need to add this again to receive a working URL.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>new_url <span class="ot">&lt;-</span> <span class="fu">str_c</span>(url_archive, url_date, <span class="at">sep =</span> <span class="st">&quot;web/&quot;</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>new_url</span></code></pre></div>
 <pre><code>## [1] &quot;https://web.archive.org/web/20210902040912/https://www.theguardian.com/international&quot;</code></pre>
 <p>With our new URL, we can now scrape the headlines for the next day’s edition of the Guardian newspaper!</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>guardian_headlines_new <span class="ot">&lt;-</span> new_url <span class="sc">%&gt;%</span> <span class="fu">read_html</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>rvest<span class="sc">::</span><span class="fu">html_nodes</span>(<span class="at">xpath =</span> <span class="st">&#39;//a[contains(concat( &quot; &quot;, @class, &quot; &quot; ), concat( &quot; &quot;, &quot;js-headline-text&quot;, &quot; &quot; ))]&#39;</span>) <span class="sc">%&gt;%</span> rvest<span class="sc">::</span><span class="fu">html_text</span>()</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>guardian_headlines_new[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)]</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>guardian_headlines_new <span class="ot">&lt;-</span> new_url <span class="sc">%&gt;%</span> <span class="fu">read_html</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>rvest<span class="sc">::</span><span class="fu">html_nodes</span>(<span class="at">xpath =</span> <span class="st">&#39;//a[contains(concat( &quot; &quot;, @class, &quot; &quot; ), concat( &quot; &quot;, &quot;js-headline-text&quot;, &quot; &quot; ))]&#39;</span>) <span class="sc">%&gt;%</span> rvest<span class="sc">::</span><span class="fu">html_text</span>()</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>guardian_headlines_new[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)]</span></code></pre></div>
 <pre><code>## [1] &quot;Texas law &#39;blatantly violates&#39; constitutional rights, says Biden&quot;             
 ## [2] &quot;Sackler family set to pay $4.5bn to settle claims &quot;                           
 ## [3] &quot;US military chief could work with Taliban on IS counter-terror strikes&quot;       
 ## [4] &quot;Joe Rogan has the virus – and his treatment will make health experts feel ill&quot;
 ## [5] &quot;Site bans Covid misinformation forum after ‘go dark’ protest&quot;</code></pre>
 </div>
+<div id="managing-length-and-order-of-strings" class="section level2">
+<h2>Managing length and order of strings</h2>
+<p>Now that we now how to retrieve headlines, let us have a look at the headlines we got for 1 Septemeber. First, we might be interested to order them alphabetically. We can use str_sort for this.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sort</span>(guardian_headlines)</span></code></pre></div>
+<pre><code>##  [1] &quot; More from the series &quot;                                                                   
+##  [2] &quot; The British citizens left behind in Kabul &quot;                                              
+##  [3] &quot;‘People are broken’: Afghans describe first day under full Taliban control&quot;               
+##  [4] &quot;10 ways to approach a sensitive, daunting conversation&quot;                                   
+##  [5] &quot;75 cases recorded after two days of falls &quot;                                               
+##  [6] &quot;A human is not a horse. So why is a livestock drug sweeping America?&quot;                     
+##  [7] &quot;Afghan athlete evacuated from Kabul belatedly competes&quot;                                   
+##  [8] &quot;Afghanistan women’s cricketers left feeling abandoned&quot;                                    
+##  [9] &quot;Afghanistan’s neighbours offered millions in aid to harbour refugees&quot;                     
+## [10] &quot;Astonishing and petrifying&quot;                                                               
+## [11] &quot;Banned BBC journalist says country ‘moving in reverse’ in final report &quot;                  
+## [12] &quot;Biden calls for new era in US foreign policy in defensive speech&quot;                         
+## [13] &quot;Biden sets himself apart by placing Afghanistan blame at predecessors’ feet&quot;              
+## [14] &quot;Brazil football legend in hospital for routine exams&quot;                                     
+## [15] &quot;Can the ‘high heel index’ predict economic growth?&quot;                                       
+## [16] &quot;Concern grows for global supply as Vietnam struggles in lockdown&quot;                         
+## [17] &quot;Cyclist becomes Summer and Winter Paralympic champion with gold&quot;                          
+## [18] &quot;Cyprus prepares for oil spill from Syrian power plant&quot;                                    
+## [19] &quot;Doja Cat, fires and festivals&quot;                                                            
+## [20] &quot;Dunkley eager to face New Zealand and judge Hundred impact&quot;                               
+## [21] &quot;Evin prison guards investigated after abuse video leak&quot;                                   
+## [22] &quot;Family of US journalist Danny Fenster calls for release after 100 days of detention &quot;     
+## [23] &quot;Fatah critic’s death highlights brutality of Palestinian Authority&quot;                       
+## [24] &quot;Father seeking $2m before stepping down as conservator, court filing claims&quot;              
+## [25] &quot;Floating wind turbines could open up vast ocean tracts for generation&quot;                    
+## [26] &quot;Football legend in hospital in Brazil for routine exams&quot;                                  
+## [27] &quot;For years it was seen as a far-off problem&quot;                                               
+## [28] &quot;Fox News accused of stoking violence after Tucker Carlson ‘revolt’ prediction&quot;            
+## [29] &quot;Germany warns union against setting target of Afghan refugees&quot;                            
+## [30] &quot;Governor pardons seven Black men executed in 1951 for rape of a white woman&quot;              
+## [31] &quot;Griezmann re-joins Atlético from Barcelona in shock move&quot;                                 
+## [32] &quot;Hate crimes rise to highest level in 12 years, says FBI report&quot;                           
+## [33] &quot;Health authorities warn against mixing Covid vaccine types&quot;                               
+## [34] &quot;Hicks adds time trial gold to track silver medal&quot;                                         
+## [35] &quot;How a hot blob off the country&#39;s coast is contributing to drought in South America&quot;       
+## [36] &quot;How artificial birds are relaying the secrets of ocean currents&quot;                          
+## [37] &quot;How artificial birds are relaying the secrets of ocean currents&quot;                          
+## [38] &quot;How did a Bob Ross documentary become so contentious?&quot;                                    
+## [39] &quot;How have you been affected by those in southern Europe?&quot;                                  
+## [40] &quot;How New Zealand’s Maori are reclaiming land with occupations&quot;                             
+## [41] &quot;How the US created a world of endless war&quot;                                                
+## [42] &quot;I fear for my family in Kabul, but I know the Taliban can be resisted&quot;                    
+## [43] &quot;I hitchhiked 100 miles home from my school for the blind&quot;                                 
+## [44] &quot;In Afghanistan, Islamic State is seeking to exploit divisions within the Taliban&quot;         
+## [45] &quot;Israel registers record daily coronavirus cases&quot;                                          
+## [46] &quot;Its responsibilities don’t end here&quot;                                                      
+## [47] &quot;Judge orders hospital to treat Covid patient with ivermectin&quot;                             
+## [48] &quot;Kane has no regrets over trying to force move from Spurs&quot;                                 
+## [49] &quot;Last man out: the haunting image of America’s final moments in Afghanistan&quot;               
+## [50] &quot;Lockdown has made us fall in love with the sea&quot;                                           
+## [51] &quot;Miss Marple back on the case in stories by Naomi Alderman, Ruth Ware and more&quot;            
+## [52] &quot;New Zealand minister’s TV interview interrupted by son waving phallic carrot&quot;             
+## [53] &quot;No-cook dinners for summer nights&quot;                                                        
+## [54] &quot;Outrage after Ivory Coast TV presenter asks guest to simulate rape&quot;                       
+## [55] &quot;Outrage after Ivory Coast TV presenter asks guest to simulate rape&quot;                       
+## [56] &quot;Passports will make hesitant people ‘even more reluctant to get jabbed’&quot;                  
+## [57] &quot;People can self-identify as male or female in Scottish census, says guidance&quot;             
+## [58] &quot;Population surpasses 5m for first time since 1851&quot;                                        
+## [59] &quot;Princess Diana film debuts as industry aims for return to normality&quot;                      
+## [60] &quot;Queen hired as set designer on new Netflix film&quot;                                          
+## [61] &quot;Raducanu shrugs off nerves to reach second round&quot;                                         
+## [62] &quot;Sergei Kovalev obituary&quot;                                                                  
+## [63] &quot;Share your experience of coronavirus&quot;                                                     
+## [64] &quot;Skyscraper plans threaten UK’s oldest synagogue&quot;                                          
+## [65] &quot;Storm leaves trail of destruction as road collapse raises death toll to four&quot;             
+## [66] &quot;Storm leaves trail of destruction as road collapse raises death toll to four&quot;             
+## [67] &quot;Storm’s rampage through Louisiana&quot;                                                        
+## [68] &quot;Taliban enjoy moment of victory as focus shifts to challenges ahead&quot;                      
+## [69] &quot;The art show co-curated by a five-year-old&quot;                                               
+## [70] &quot;The end of Geronimo and the last US soldier in Afghanistan&quot;                               
+## [71] &quot;The fight over Jeff Buckley’s final recordings&quot;                                           
+## [72] &quot;The photography of Hiro &quot;                                                                 
+## [73] &quot;The Stranglers on fights, drugs and finally growing up&quot;                                   
+## [74] &quot;The Sydney suburbs under curfew: street lights and empty spaces &quot;                         
+## [75] &quot;The US supreme court is deciding more and more cases in a secretive ‘shadow docket’&quot;      
+## [76] &quot;The wild adventures of Fred Baldwin &quot;                                                     
+## [77] &quot;To understand what happens next in Afghanistan, look to its neighbours&quot;                   
+## [78] &quot;Unstoppable movement: how New Zealand’s Maori are reclaiming land with occupations&quot;       
+## [79] &quot;Up to half of world’s wild tree species could be at risk of extinction&quot;                   
+## [80] &quot;US national parks are overcrowded. Some think ‘selfie stations’ will help&quot;                
+## [81] &quot;US veterans on seeing Afghanistan fall to the Taliban&quot;                                    
+## [82] &quot;Vaccine passports will make hesitant people ‘even more reluctant to get jabbed’&quot;          
+## [83] &quot;Walking-and-talking romance never gets anywhere &quot;                                         
+## [84] &quot;Welsh teen in hospital with Covid targeted online by anti-vaxxers &quot;                       
+## [85] &quot;Western economies can’t return to ‘business as usual’ after the pandemic&quot;                 
+## [86] &quot;What evolutionary advantage comes from women having considerably less body hair than men?&quot;
+## [87] &quot;What was the moment that changed you?&quot;                                                    
+## [88] &quot;Wheelchair basketball, road cycling, badminton begins and more – live!&quot;                   
+## [89] &quot;Why a rude carrot can spark sheer joy – from ancient Egypt to today&quot;                      
+## [90] &quot;Wild cockatoos observed using tools as ‘cutlery’ to extract seeds from tropical fruit&quot;    
+## [91] &quot;Without a guiding purpose, Boris Johnson will always be governing in a crisis&quot;</code></pre>
+<p>Did you realise that there are two headlines at the beginning that start with a whitespace and are therefore mistakenly ranked first? We can trim whitespace at the beginning and end of each string using str_trunc. Furthermore, let us truncate the strings to make the output neater using str_trunc. This gives us a nicely sorted list.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sort</span>(<span class="fu">str_trunc</span>(<span class="fu">str_trim</span>(guardian_headlines),<span class="dv">17</span>))</span></code></pre></div>
+<pre><code>##  [1] &quot;‘People are br...&quot; &quot;10 ways to app...&quot; &quot;75 cases recor...&quot;
+##  [4] &quot;A human is not...&quot; &quot;Afghan athlete...&quot; &quot;Afghanistan wo...&quot;
+##  [7] &quot;Afghanistan’s ...&quot; &quot;Astonishing an...&quot; &quot;Banned BBC jou...&quot;
+## [10] &quot;Biden calls fo...&quot; &quot;Biden sets him...&quot; &quot;Brazil footbal...&quot;
+## [13] &quot;Can the ‘high ...&quot; &quot;Concern grows ...&quot; &quot;Cyclist become...&quot;
+## [16] &quot;Cyprus prepare...&quot; &quot;Doja Cat, fire...&quot; &quot;Dunkley eager ...&quot;
+## [19] &quot;Evin prison gu...&quot; &quot;Family of US j...&quot; &quot;Fatah critic’s...&quot;
+## [22] &quot;Father seeking...&quot; &quot;Floating wind ...&quot; &quot;Football legen...&quot;
+## [25] &quot;For years it w...&quot; &quot;Fox News accus...&quot; &quot;Germany warns ...&quot;
+## [28] &quot;Governor pardo...&quot; &quot;Griezmann re-j...&quot; &quot;Hate crimes ri...&quot;
+## [31] &quot;Health authori...&quot; &quot;Hicks adds tim...&quot; &quot;How a hot blob...&quot;
+## [34] &quot;How artificial...&quot; &quot;How artificial...&quot; &quot;How did a Bob ...&quot;
+## [37] &quot;How have you b...&quot; &quot;How New Zealan...&quot; &quot;How the US cre...&quot;
+## [40] &quot;I fear for my ...&quot; &quot;I hitchhiked 1...&quot; &quot;In Afghanistan...&quot;
+## [43] &quot;Israel registe...&quot; &quot;Its responsibi...&quot; &quot;Judge orders h...&quot;
+## [46] &quot;Kane has no re...&quot; &quot;Last man out: ...&quot; &quot;Lockdown has m...&quot;
+## [49] &quot;Miss Marple ba...&quot; &quot;More from the ...&quot; &quot;New Zealand mi...&quot;
+## [52] &quot;No-cook dinner...&quot; &quot;Outrage after ...&quot; &quot;Outrage after ...&quot;
+## [55] &quot;Passports will...&quot; &quot;People can sel...&quot; &quot;Population sur...&quot;
+## [58] &quot;Princess Diana...&quot; &quot;Queen hired as...&quot; &quot;Raducanu shrug...&quot;
+## [61] &quot;Sergei Kovalev...&quot; &quot;Share your exp...&quot; &quot;Skyscraper pla...&quot;
+## [64] &quot;Storm leaves t...&quot; &quot;Storm leaves t...&quot; &quot;Storm’s rampag...&quot;
+## [67] &quot;Taliban enjoy ...&quot; &quot;The art show c...&quot; &quot;The British ci...&quot;
+## [70] &quot;The end of Ger...&quot; &quot;The fight over...&quot; &quot;The photograph...&quot;
+## [73] &quot;The Stranglers...&quot; &quot;The Sydney sub...&quot; &quot;The US supreme...&quot;
+## [76] &quot;The wild adven...&quot; &quot;To understand ...&quot; &quot;Unstoppable mo...&quot;
+## [79] &quot;Up to half of ...&quot; &quot;US national pa...&quot; &quot;US veterans on...&quot;
+## [82] &quot;Vaccine passpo...&quot; &quot;Walking-and-ta...&quot; &quot;Welsh teen in ...&quot;
+## [85] &quot;Western econom...&quot; &quot;What evolution...&quot; &quot;What was the m...&quot;
+## [88] &quot;Wheelchair bas...&quot; &quot;Why a rude car...&quot; &quot;Wild cockatoos...&quot;
+## [91] &quot;Without a guid...&quot;</code></pre>
+<p>If we want to know which numeric rank the headlines in the list will have if sorted, we use str_order.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_order</span>(<span class="fu">str_trim</span>(guardian_headlines))</span></code></pre></div>
+<pre><code>##  [1] 82 62 20 32 22 27 91 54 46  1  2 10 65  7 23 53 80 30 45  9 16  4 41 28 43
+## [26] 50 51 11 25 49 19 24 42 14 67 55 75 13 66 31 60 38 87 34 21 29 69 64 59 40
+## [51] 89 63  8 84 18 48 52 56 57 26 68 73 47  6 44 81 90 12 39 77 17 79 15 76 37
+## [76] 78 36 86  5 71 70 85 58 83 35 72 74  3 61 88 33</code></pre>
+<p>Finally, we might also be interested in finding out how many characters each headline has. We can use str_length for this.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_length</span>(guardian_headlines)</span></code></pre></div>
+<pre><code>##  [1] 64 75 70 75 70 76 64 66 84 52 75 42 60 63 54 66 46 71 58 42 60 54 63 48 56
+## [26] 48 53 55 56 58 69 68 77 35 72 70 83 80 43 22 69 82 42 76 54 71 47 76 62 77
+## [51] 61 49 53 26 53 67 47 48 77 56 67 54 33 46 50 41 63 23 74 53 73 89 36 37 55
+## [76] 64 58 36 24 29 33 74 66 66 79 82 47 85 76 67 68</code></pre>
+</div>
+<div id="manipulating-and-mutating-strings" class="section level2">
+<h2>Manipulating and mutating strings</h2>
+<p>Next, we want to process the headlines, so that we can analyse the words in the headlines properly. First we want to make sure that our list of headlines does not include duplicates. We can eliminate duplicates with “unique”. FYI: If we wanted to duplicate strings we can use str_dup, specifying the number of repetition in the second argument</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>guardian_headlines <span class="ot">&lt;-</span> <span class="fu">unique</span>(guardian_headlines)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>headlines_triple <span class="ot">&lt;-</span> <span class="fu">str_dup</span>(guardian_headlines[<span class="dv">1</span>], <span class="at">times =</span> <span class="dv">3</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>headlines_triple</span></code></pre></div>
+<pre><code>## [1] &quot;Biden calls for new era in US foreign policy in defensive speechBiden calls for new era in US foreign policy in defensive speechBiden calls for new era in US foreign policy in defensive speech&quot;</code></pre>
+<p>Second, we want to collapse all headlines into a single string for which we use str_flatten. Note, we are the second argument is the pattern that will be placed between the strings. In our case we want a space, so we specify " ".</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>headline_text <span class="ot">&lt;-</span> <span class="fu">str_flatten</span>(guardian_headlines, <span class="st">&quot; &quot;</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>headline_text</span></code></pre></div>
+<pre><code>## [1] &quot;Biden calls for new era in US foreign policy in defensive speech Biden sets himself apart by placing Afghanistan blame at predecessors’ feet Wheelchair basketball, road cycling, badminton begins and more – live! Father seeking $2m before stepping down as conservator, court filing claims Up to half of world’s wild tree species could be at risk of extinction Storm leaves trail of destruction as road collapse raises death toll to four Concern grows for global supply as Vietnam struggles in lockdown Outrage after Ivory Coast TV presenter asks guest to simulate rape Family of US journalist Danny Fenster calls for release after 100 days of detention  Brazil football legend in hospital for routine exams Governor pardons seven Black men executed in 1951 for rape of a white woman The art show co-curated by a five-year-old How New Zealand’s Maori are reclaiming land with occupations How artificial birds are relaying the secrets of ocean currents The Stranglers on fights, drugs and finally growing up Fatah critic’s death highlights brutality of Palestinian Authority The fight over Jeff Buckley’s final recordings Passports will make hesitant people ‘even more reluctant to get jabbed’ Health authorities warn against mixing Covid vaccine types 75 cases recorded after two days of falls  Judge orders hospital to treat Covid patient with ivermectin Afghan athlete evacuated from Kabul belatedly competes Cyclist becomes Summer and Winter Paralympic champion with gold Hicks adds time trial gold to track silver medal Griezmann re-joins Atlético from Barcelona in shock move Raducanu shrugs off nerves to reach second round Afghanistan women’s cricketers left feeling abandoned Football legend in hospital in Brazil for routine exams Kane has no regrets over trying to force move from Spurs Dunkley eager to face New Zealand and judge Hundred impact I fear for my family in Kabul, but I know the Taliban can be resisted A human is not a horse. So why is a livestock drug sweeping America? Without a guiding purpose, Boris Johnson will always be governing in a crisis Its responsibilities don’t end here Western economies can’t return to ‘business as usual’ after the pandemic To understand what happens next in Afghanistan, look to its neighbours The US supreme court is deciding more and more cases in a secretive ‘shadow docket’ In Afghanistan, Islamic State is seeking to exploit divisions within the Taliban  The British citizens left behind in Kabul   More from the series  Floating wind turbines could open up vast ocean tracts for generation How a hot blob off the country&#39;s coast is contributing to drought in South America For years it was seen as a far-off problem Evin prison guards investigated after abuse video leak Banned BBC journalist says country ‘moving in reverse’ in final report  Skyscraper plans threaten UK’s oldest synagogue People can self-identify as male or female in Scottish census, says guidance Hate crimes rise to highest level in 12 years, says FBI report Fox News accused of stoking violence after Tucker Carlson ‘revolt’ prediction Germany warns union against setting target of Afghan refugees Population surpasses 5m for first time since 1851 Cyprus prepares for oil spill from Syrian power plant Astonishing and petrifying How did a Bob Ross documentary become so contentious? Princess Diana film debuts as industry aims for return to normality Queen hired as set designer on new Netflix film Walking-and-talking romance never gets anywhere  Miss Marple back on the case in stories by Naomi Alderman, Ruth Ware and more I hitchhiked 100 miles home from my school for the blind Why a rude carrot can spark sheer joy – from ancient Egypt to today 10 ways to approach a sensitive, daunting conversation No-cook dinners for summer nights Lockdown has made us fall in love with the sea Can the ‘high heel index’ predict economic growth? How the US created a world of endless war Sergei Kovalev obituary Last man out: the haunting image of America’s final moments in Afghanistan US veterans on seeing Afghanistan fall to the Taliban US national parks are overcrowded. Some think ‘selfie stations’ will help What evolutionary advantage comes from women having considerably less body hair than men? Share your experience of coronavirus What was the moment that changed you? How have you been affected by those in southern Europe? The Sydney suburbs under curfew: street lights and empty spaces  The end of Geronimo and the last US soldier in Afghanistan The wild adventures of Fred Baldwin  The photography of Hiro  Doja Cat, fires and festivals Storm’s rampage through Louisiana ‘People are broken’: Afghans describe first day under full Taliban control Welsh teen in hospital with Covid targeted online by anti-vaxxers  Vaccine passports will make hesitant people ‘even more reluctant to get jabbed’ Unstoppable movement: how New Zealand’s Maori are reclaiming land with occupations Israel registers record daily coronavirus cases Wild cockatoos observed using tools as ‘cutlery’ to extract seeds from tropical fruit New Zealand minister’s TV interview interrupted by son waving phallic carrot Taliban enjoy moment of victory as focus shifts to challenges ahead Afghanistan’s neighbours offered millions in aid to harbour refugees&quot;</code></pre>
+<p>Nice! However, there are still punctuations and too many spaces in the text. Let us eliminate all punctuations at once using str_replace_all. The Regex term [:punct:] recognises all punctuation signs which eliminates the need of specifying dots, exclamation marks etc. separately. Similarily [:space:] refers to all lign change, tabs and spaces. Alternatively, we can use str_squish here. Compare the results.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>headline_text <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(headline_text, <span class="st">&quot;[:punct:]&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>headline_text <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(headline_text, <span class="st">&quot;[:space:]&quot;</span>, <span class="st">&quot; &quot;</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>headline_text2 <span class="ot">&lt;-</span> <span class="fu">str_squish</span>(headline_text)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>headline_text</span></code></pre></div>
+<pre><code>## [1] &quot;Biden calls for new era in US foreign policy in defensive speech Biden sets himself apart by placing Afghanistan blame at predecessors feet Wheelchair basketball road cycling badminton begins and more  live Father seeking $2m before stepping down as conservator court filing claims Up to half of worlds wild tree species could be at risk of extinction Storm leaves trail of destruction as road collapse raises death toll to four Concern grows for global supply as Vietnam struggles in lockdown Outrage after Ivory Coast TV presenter asks guest to simulate rape Family of US journalist Danny Fenster calls for release after 100 days of detention  Brazil football legend in hospital for routine exams Governor pardons seven Black men executed in 1951 for rape of a white woman The art show cocurated by a fiveyearold How New Zealands Maori are reclaiming land with occupations How artificial birds are relaying the secrets of ocean currents The Stranglers on fights drugs and finally growing up Fatah critics death highlights brutality of Palestinian Authority The fight over Jeff Buckleys final recordings Passports will make hesitant people even more reluctant to get jabbed Health authorities warn against mixing Covid vaccine types 75 cases recorded after two days of falls  Judge orders hospital to treat Covid patient with ivermectin Afghan athlete evacuated from Kabul belatedly competes Cyclist becomes Summer and Winter Paralympic champion with gold Hicks adds time trial gold to track silver medal Griezmann rejoins Atlético from Barcelona in shock move Raducanu shrugs off nerves to reach second round Afghanistan womens cricketers left feeling abandoned Football legend in hospital in Brazil for routine exams Kane has no regrets over trying to force move from Spurs Dunkley eager to face New Zealand and judge Hundred impact I fear for my family in Kabul but I know the Taliban can be resisted A human is not a horse So why is a livestock drug sweeping America Without a guiding purpose Boris Johnson will always be governing in a crisis Its responsibilities dont end here Western economies cant return to business as usual after the pandemic To understand what happens next in Afghanistan look to its neighbours The US supreme court is deciding more and more cases in a secretive shadow docket In Afghanistan Islamic State is seeking to exploit divisions within the Taliban  The British citizens left behind in Kabul   More from the series  Floating wind turbines could open up vast ocean tracts for generation How a hot blob off the countrys coast is contributing to drought in South America For years it was seen as a faroff problem Evin prison guards investigated after abuse video leak Banned BBC journalist says country moving in reverse in final report  Skyscraper plans threaten UKs oldest synagogue People can selfidentify as male or female in Scottish census says guidance Hate crimes rise to highest level in 12 years says FBI report Fox News accused of stoking violence after Tucker Carlson revolt prediction Germany warns union against setting target of Afghan refugees Population surpasses 5m for first time since 1851 Cyprus prepares for oil spill from Syrian power plant Astonishing and petrifying How did a Bob Ross documentary become so contentious Princess Diana film debuts as industry aims for return to normality Queen hired as set designer on new Netflix film Walkingandtalking romance never gets anywhere  Miss Marple back on the case in stories by Naomi Alderman Ruth Ware and more I hitchhiked 100 miles home from my school for the blind Why a rude carrot can spark sheer joy  from ancient Egypt to today 10 ways to approach a sensitive daunting conversation Nocook dinners for summer nights Lockdown has made us fall in love with the sea Can the high heel index predict economic growth How the US created a world of endless war Sergei Kovalev obituary Last man out the haunting image of Americas final moments in Afghanistan US veterans on seeing Afghanistan fall to the Taliban US national parks are overcrowded Some think selfie stations will help What evolutionary advantage comes from women having considerably less body hair than men Share your experience of coronavirus What was the moment that changed you How have you been affected by those in southern Europe The Sydney suburbs under curfew street lights and empty spaces  The end of Geronimo and the last US soldier in Afghanistan The wild adventures of Fred Baldwin  The photography of Hiro  Doja Cat fires and festivals Storms rampage through Louisiana People are broken Afghans describe first day under full Taliban control Welsh teen in hospital with Covid targeted online by antivaxxers  Vaccine passports will make hesitant people even more reluctant to get jabbed Unstoppable movement how New Zealands Maori are reclaiming land with occupations Israel registers record daily coronavirus cases Wild cockatoos observed using tools as cutlery to extract seeds from tropical fruit New Zealand ministers TV interview interrupted by son waving phallic carrot Taliban enjoy moment of victory as focus shifts to challenges ahead Afghanistans neighbours offered millions in aid to harbour refugees&quot;</code></pre>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>headline_text2</span></code></pre></div>
+<pre><code>## [1] &quot;Biden calls for new era in US foreign policy in defensive speech Biden sets himself apart by placing Afghanistan blame at predecessors feet Wheelchair basketball road cycling badminton begins and more live Father seeking $2m before stepping down as conservator court filing claims Up to half of worlds wild tree species could be at risk of extinction Storm leaves trail of destruction as road collapse raises death toll to four Concern grows for global supply as Vietnam struggles in lockdown Outrage after Ivory Coast TV presenter asks guest to simulate rape Family of US journalist Danny Fenster calls for release after 100 days of detention Brazil football legend in hospital for routine exams Governor pardons seven Black men executed in 1951 for rape of a white woman The art show cocurated by a fiveyearold How New Zealands Maori are reclaiming land with occupations How artificial birds are relaying the secrets of ocean currents The Stranglers on fights drugs and finally growing up Fatah critics death highlights brutality of Palestinian Authority The fight over Jeff Buckleys final recordings Passports will make hesitant people even more reluctant to get jabbed Health authorities warn against mixing Covid vaccine types 75 cases recorded after two days of falls Judge orders hospital to treat Covid patient with ivermectin Afghan athlete evacuated from Kabul belatedly competes Cyclist becomes Summer and Winter Paralympic champion with gold Hicks adds time trial gold to track silver medal Griezmann rejoins Atlético from Barcelona in shock move Raducanu shrugs off nerves to reach second round Afghanistan womens cricketers left feeling abandoned Football legend in hospital in Brazil for routine exams Kane has no regrets over trying to force move from Spurs Dunkley eager to face New Zealand and judge Hundred impact I fear for my family in Kabul but I know the Taliban can be resisted A human is not a horse So why is a livestock drug sweeping America Without a guiding purpose Boris Johnson will always be governing in a crisis Its responsibilities dont end here Western economies cant return to business as usual after the pandemic To understand what happens next in Afghanistan look to its neighbours The US supreme court is deciding more and more cases in a secretive shadow docket In Afghanistan Islamic State is seeking to exploit divisions within the Taliban The British citizens left behind in Kabul More from the series Floating wind turbines could open up vast ocean tracts for generation How a hot blob off the countrys coast is contributing to drought in South America For years it was seen as a faroff problem Evin prison guards investigated after abuse video leak Banned BBC journalist says country moving in reverse in final report Skyscraper plans threaten UKs oldest synagogue People can selfidentify as male or female in Scottish census says guidance Hate crimes rise to highest level in 12 years says FBI report Fox News accused of stoking violence after Tucker Carlson revolt prediction Germany warns union against setting target of Afghan refugees Population surpasses 5m for first time since 1851 Cyprus prepares for oil spill from Syrian power plant Astonishing and petrifying How did a Bob Ross documentary become so contentious Princess Diana film debuts as industry aims for return to normality Queen hired as set designer on new Netflix film Walkingandtalking romance never gets anywhere Miss Marple back on the case in stories by Naomi Alderman Ruth Ware and more I hitchhiked 100 miles home from my school for the blind Why a rude carrot can spark sheer joy from ancient Egypt to today 10 ways to approach a sensitive daunting conversation Nocook dinners for summer nights Lockdown has made us fall in love with the sea Can the high heel index predict economic growth How the US created a world of endless war Sergei Kovalev obituary Last man out the haunting image of Americas final moments in Afghanistan US veterans on seeing Afghanistan fall to the Taliban US national parks are overcrowded Some think selfie stations will help What evolutionary advantage comes from women having considerably less body hair than men Share your experience of coronavirus What was the moment that changed you How have you been affected by those in southern Europe The Sydney suburbs under curfew street lights and empty spaces The end of Geronimo and the last US soldier in Afghanistan The wild adventures of Fred Baldwin The photography of Hiro Doja Cat fires and festivals Storms rampage through Louisiana People are broken Afghans describe first day under full Taliban control Welsh teen in hospital with Covid targeted online by antivaxxers Vaccine passports will make hesitant people even more reluctant to get jabbed Unstoppable movement how New Zealands Maori are reclaiming land with occupations Israel registers record daily coronavirus cases Wild cockatoos observed using tools as cutlery to extract seeds from tropical fruit New Zealand ministers TV interview interrupted by son waving phallic carrot Taliban enjoy moment of victory as focus shifts to challenges ahead Afghanistans neighbours offered millions in aid to harbour refugees&quot;</code></pre>
+<p>This looks far better, however, we still have the problem that some words are capitalised because they used to be the first word in the headline. We can convert strings to lower case using str_to_lower. For commands to capitalise strings and convert them to title case, have a look at the cheat sheet.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>headline_text <span class="ot">&lt;-</span> <span class="fu">str_to_lower</span>(headline_text)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>headline_text</span></code></pre></div>
+<pre><code>## [1] &quot;biden calls for new era in us foreign policy in defensive speech biden sets himself apart by placing afghanistan blame at predecessors feet wheelchair basketball road cycling badminton begins and more  live father seeking $2m before stepping down as conservator court filing claims up to half of worlds wild tree species could be at risk of extinction storm leaves trail of destruction as road collapse raises death toll to four concern grows for global supply as vietnam struggles in lockdown outrage after ivory coast tv presenter asks guest to simulate rape family of us journalist danny fenster calls for release after 100 days of detention  brazil football legend in hospital for routine exams governor pardons seven black men executed in 1951 for rape of a white woman the art show cocurated by a fiveyearold how new zealands maori are reclaiming land with occupations how artificial birds are relaying the secrets of ocean currents the stranglers on fights drugs and finally growing up fatah critics death highlights brutality of palestinian authority the fight over jeff buckleys final recordings passports will make hesitant people even more reluctant to get jabbed health authorities warn against mixing covid vaccine types 75 cases recorded after two days of falls  judge orders hospital to treat covid patient with ivermectin afghan athlete evacuated from kabul belatedly competes cyclist becomes summer and winter paralympic champion with gold hicks adds time trial gold to track silver medal griezmann rejoins atlético from barcelona in shock move raducanu shrugs off nerves to reach second round afghanistan womens cricketers left feeling abandoned football legend in hospital in brazil for routine exams kane has no regrets over trying to force move from spurs dunkley eager to face new zealand and judge hundred impact i fear for my family in kabul but i know the taliban can be resisted a human is not a horse so why is a livestock drug sweeping america without a guiding purpose boris johnson will always be governing in a crisis its responsibilities dont end here western economies cant return to business as usual after the pandemic to understand what happens next in afghanistan look to its neighbours the us supreme court is deciding more and more cases in a secretive shadow docket in afghanistan islamic state is seeking to exploit divisions within the taliban  the british citizens left behind in kabul   more from the series  floating wind turbines could open up vast ocean tracts for generation how a hot blob off the countrys coast is contributing to drought in south america for years it was seen as a faroff problem evin prison guards investigated after abuse video leak banned bbc journalist says country moving in reverse in final report  skyscraper plans threaten uks oldest synagogue people can selfidentify as male or female in scottish census says guidance hate crimes rise to highest level in 12 years says fbi report fox news accused of stoking violence after tucker carlson revolt prediction germany warns union against setting target of afghan refugees population surpasses 5m for first time since 1851 cyprus prepares for oil spill from syrian power plant astonishing and petrifying how did a bob ross documentary become so contentious princess diana film debuts as industry aims for return to normality queen hired as set designer on new netflix film walkingandtalking romance never gets anywhere  miss marple back on the case in stories by naomi alderman ruth ware and more i hitchhiked 100 miles home from my school for the blind why a rude carrot can spark sheer joy  from ancient egypt to today 10 ways to approach a sensitive daunting conversation nocook dinners for summer nights lockdown has made us fall in love with the sea can the high heel index predict economic growth how the us created a world of endless war sergei kovalev obituary last man out the haunting image of americas final moments in afghanistan us veterans on seeing afghanistan fall to the taliban us national parks are overcrowded some think selfie stations will help what evolutionary advantage comes from women having considerably less body hair than men share your experience of coronavirus what was the moment that changed you how have you been affected by those in southern europe the sydney suburbs under curfew street lights and empty spaces  the end of geronimo and the last us soldier in afghanistan the wild adventures of fred baldwin  the photography of hiro  doja cat fires and festivals storms rampage through louisiana people are broken afghans describe first day under full taliban control welsh teen in hospital with covid targeted online by antivaxxers  vaccine passports will make hesitant people even more reluctant to get jabbed unstoppable movement how new zealands maori are reclaiming land with occupations israel registers record daily coronavirus cases wild cockatoos observed using tools as cutlery to extract seeds from tropical fruit new zealand ministers tv interview interrupted by son waving phallic carrot taliban enjoy moment of victory as focus shifts to challenges ahead afghanistans neighbours offered millions in aid to harbour refugees&quot;</code></pre>
+<p>Nice!! Now we are ready to analyse the words. Let us say we are interested in finding out the most frequent noun used in the headlines. Following <a href="https://r4ds.had.co.nz/strings.html" class="uri">https://r4ds.had.co.nz/strings.html</a>, while imperfect, we could define a noun as a word proceeded by either “the” or “a”. Using this imperfect definition, we can use either str_match_all or str_extract_all to extract all the nouns from the text.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>noun_function <span class="ot">&lt;-</span> <span class="st">&quot;(a|the) ([^ ]+)&quot;</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>extracted_words <span class="ot">&lt;-</span> <span class="fu">str_extract_all</span>(headline_text, noun_function)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>extracted_words2 <span class="ot">&lt;-</span> <span class="fu">str_match_all</span>(headline_text, noun_function)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>extracted_words</span></code></pre></div>
+<pre><code>## [[1]]
+##  [1] &quot;a in&quot;            &quot;a white&quot;         &quot;the art&quot;         &quot;a fiveyearold&quot;  
+##  [5] &quot;the secrets&quot;     &quot;the stranglers&quot;  &quot;the fight&quot;       &quot;a in&quot;           
+##  [9] &quot;the taliban&quot;     &quot;a human&quot;         &quot;a horse&quot;         &quot;a livestock&quot;    
+## [13] &quot;a without&quot;       &quot;a guiding&quot;       &quot;a crisis&quot;        &quot;the pandemic&quot;   
+## [17] &quot;the us&quot;          &quot;a secretive&quot;     &quot;the taliban&quot;     &quot;the british&quot;    
+## [21] &quot;the series&quot;      &quot;a hot&quot;           &quot;the countrys&quot;    &quot;a for&quot;          
+## [25] &quot;a faroff&quot;        &quot;a bob&quot;           &quot;a film&quot;          &quot;the case&quot;       
+## [29] &quot;the blind&quot;       &quot;a rude&quot;          &quot;a sensitive&quot;     &quot;the sea&quot;        
+## [33] &quot;the high&quot;        &quot;the us&quot;          &quot;a world&quot;         &quot;the haunting&quot;   
+## [37] &quot;the taliban&quot;     &quot;the moment&quot;      &quot;the sydney&quot;      &quot;the end&quot;        
+## [41] &quot;the last&quot;        &quot;the wild&quot;        &quot;the photography&quot; &quot;a cat&quot;          
+## [45] &quot;a people&quot;</code></pre>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>extracted_words2</span></code></pre></div>
+<pre><code>## [[1]]
+##       [,1]              [,2]  [,3]         
+##  [1,] &quot;a in&quot;            &quot;a&quot;   &quot;in&quot;         
+##  [2,] &quot;a white&quot;         &quot;a&quot;   &quot;white&quot;      
+##  [3,] &quot;the art&quot;         &quot;the&quot; &quot;art&quot;        
+##  [4,] &quot;a fiveyearold&quot;   &quot;a&quot;   &quot;fiveyearold&quot;
+##  [5,] &quot;the secrets&quot;     &quot;the&quot; &quot;secrets&quot;    
+##  [6,] &quot;the stranglers&quot;  &quot;the&quot; &quot;stranglers&quot; 
+##  [7,] &quot;the fight&quot;       &quot;the&quot; &quot;fight&quot;      
+##  [8,] &quot;a in&quot;            &quot;a&quot;   &quot;in&quot;         
+##  [9,] &quot;the taliban&quot;     &quot;the&quot; &quot;taliban&quot;    
+## [10,] &quot;a human&quot;         &quot;a&quot;   &quot;human&quot;      
+## [11,] &quot;a horse&quot;         &quot;a&quot;   &quot;horse&quot;      
+## [12,] &quot;a livestock&quot;     &quot;a&quot;   &quot;livestock&quot;  
+## [13,] &quot;a without&quot;       &quot;a&quot;   &quot;without&quot;    
+## [14,] &quot;a guiding&quot;       &quot;a&quot;   &quot;guiding&quot;    
+## [15,] &quot;a crisis&quot;        &quot;a&quot;   &quot;crisis&quot;     
+## [16,] &quot;the pandemic&quot;    &quot;the&quot; &quot;pandemic&quot;   
+## [17,] &quot;the us&quot;          &quot;the&quot; &quot;us&quot;         
+## [18,] &quot;a secretive&quot;     &quot;a&quot;   &quot;secretive&quot;  
+## [19,] &quot;the taliban&quot;     &quot;the&quot; &quot;taliban&quot;    
+## [20,] &quot;the british&quot;     &quot;the&quot; &quot;british&quot;    
+## [21,] &quot;the series&quot;      &quot;the&quot; &quot;series&quot;     
+## [22,] &quot;a hot&quot;           &quot;a&quot;   &quot;hot&quot;        
+## [23,] &quot;the countrys&quot;    &quot;the&quot; &quot;countrys&quot;   
+## [24,] &quot;a for&quot;           &quot;a&quot;   &quot;for&quot;        
+## [25,] &quot;a faroff&quot;        &quot;a&quot;   &quot;faroff&quot;     
+## [26,] &quot;a bob&quot;           &quot;a&quot;   &quot;bob&quot;        
+## [27,] &quot;a film&quot;          &quot;a&quot;   &quot;film&quot;       
+## [28,] &quot;the case&quot;        &quot;the&quot; &quot;case&quot;       
+## [29,] &quot;the blind&quot;       &quot;the&quot; &quot;blind&quot;      
+## [30,] &quot;a rude&quot;          &quot;a&quot;   &quot;rude&quot;       
+## [31,] &quot;a sensitive&quot;     &quot;a&quot;   &quot;sensitive&quot;  
+## [32,] &quot;the sea&quot;         &quot;the&quot; &quot;sea&quot;        
+## [33,] &quot;the high&quot;        &quot;the&quot; &quot;high&quot;       
+## [34,] &quot;the us&quot;          &quot;the&quot; &quot;us&quot;         
+## [35,] &quot;a world&quot;         &quot;a&quot;   &quot;world&quot;      
+## [36,] &quot;the haunting&quot;    &quot;the&quot; &quot;haunting&quot;   
+## [37,] &quot;the taliban&quot;     &quot;the&quot; &quot;taliban&quot;    
+## [38,] &quot;the moment&quot;      &quot;the&quot; &quot;moment&quot;     
+## [39,] &quot;the sydney&quot;      &quot;the&quot; &quot;sydney&quot;     
+## [40,] &quot;the end&quot;         &quot;the&quot; &quot;end&quot;        
+## [41,] &quot;the last&quot;        &quot;the&quot; &quot;last&quot;       
+## [42,] &quot;the wild&quot;        &quot;the&quot; &quot;wild&quot;       
+## [43,] &quot;the photography&quot; &quot;the&quot; &quot;photography&quot;
+## [44,] &quot;a cat&quot;           &quot;a&quot;   &quot;cat&quot;        
+## [45,] &quot;a people&quot;        &quot;a&quot;   &quot;people&quot;</code></pre>
+<p>The convenience of str_match is that it saves each individual word separately in a column too. This way we can save the nouns to a new vector and use this list to find the five most frequently used nouns.</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>nouns <span class="ot">&lt;-</span> extracted_words2[[<span class="dv">1</span>]][,<span class="dv">3</span>]</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>top5words <span class="ot">&lt;-</span> <span class="fu">tibble</span>(nouns)<span class="sc">%&gt;%</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(nouns) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n))<span class="sc">%&gt;%</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>top5words</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["nouns"],"name":[1],"type":["chr"],"align":["left"]},{"label":["n"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"taliban","2":"3"},{"1":"in","2":"2"},{"1":"us","2":"2"},{"1":"art","2":"1"},{"1":"blind","2":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
 
 &nbsp;
 <hr />
-<p style="text-align: center;">A work by Lisa Oswald & Tom Arend</a></p>
+<p style="text-align: center;">A work by Max Eckert & Kai Foerster</a></p>
 <p style="text-align: center;"><span style="color: #808080;"><em>Prepared for Intro to Data Science, taught by Simon Munzert</em></span></p>
 <p style="text-align: center;"><span style="color: #808080;"><em><a href="https://www.hertie-school.org/en/">Hertie School, Berlin</em></span></p>
 
