@@ -1,29 +1,43 @@
 ---
-title: "stringr_workshop"
-author: "Kai Foerster and Max Eckert"
-date: "07/10/2021"
-output:
+title: "Stringr Workshop"
+subtitle: "String Manipulation using stringR"
+output: 
   html_document:
-    keep_md: true
+    toc: TRUE
+    df_print: paged
+    number_sections: FALSE
+    highlight: tango
+    theme: lumen 
+    toc_depth: 3
+    toc_float: true
+    css: custom.css 
+    self_contained: false
+    includes:
+      after_body: footer.html
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-### String Manipulation using stringR
-
+***
+<center>
 ![What working with strings can feel like](pics/why-cant-you-just-be-normal.gif){width=300px}
+</center>
 
 <br>
 Strings! Numeric value's unruly, difficult, unpopular cousin? We think not! String values play not only an important role in data cleaning, but texts itself are increasingly treated as rich sources of data for research in political science and public policy (see here, for example https://journals.sagepub.com/doi/full/10.1177/20531680211022206, or here: https://onlinelibrary.wiley.com/doi/10.1111/padm.12656). So today, we want to dive deeper into how to manipulate strings using the stringR package. 
 <br>
 
+<center>
 ![StringR to the rescue](pics/Meme_stringR_girl.jpg){width=300px}
-<br>
+</center>
+
+
 
 ## A Brief Overview
-Most of us already became somewhat familiar with the basic functionality of the stringR package when we used it for the previous assignments. Part of the tidyverse, the stringR package was published in 2019 and is currently running version 1.4.0. <b>All functions in stringr start with "str_" and the first argument within the bracket is always the vector of strings that you want to modify, e.g. str_replace(<i>argument1</i>, ...) which comes in handy when using the the pipe to write your code.</b>
+<br>
+Most of us already became somewhat familiar with the basic functionality of the stringR package when we used it for the previous assignments. Part of the tidyverse, the stringR package was published in 2019 and is currently running version 1.4.0. <b> All functions in stringr start with "str_" and the first argument within the bracket is always the vector of strings that you want to modify, e.g. str_replace(<i>argument1</i>, ...) which comes in handy when using the the pipe to write your code. </b>
+<br>
 
 ## Table of Contents
 In the following document, we want to walk you through the following key functions of the stringR package  and some applications:
