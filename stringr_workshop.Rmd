@@ -205,6 +205,10 @@ top5words <- tibble(nouns)%>%
 top5words
 ```
 
+## Ideas for assignments during the live coding session:
 
+1.) Scrape the newspaper articles on the date of your most recent birthday. What were the most common nouns?
+
+2.) What was the average length of headlines that day? 
 
 
