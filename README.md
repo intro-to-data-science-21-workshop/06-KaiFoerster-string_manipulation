@@ -14,7 +14,7 @@ This session will introduce you to the string manipulation package in R called s
 
 The goals of this session are to (1) equip you with conceptual knowledge about the stringr package and why string manipulation is more important than you think, (2) familiarise you with the most frequently used verbs of the package, and (3) provide you with practice material as well as some further readings (see below).
 
-Acess the excercises using this link: ([.html](https://rawcdn.githack.com/intro-to-data-science-21-workshop/06-KaiFoerster-string_manipulation/9797721fba47da222244a17a8b2e57d54b4aaee9/stringr_workshop.html) | [.Rmd](https://github.com/intro-to-data-science-21-workshop/06-KaiFoerster-string_manipulation/blob/main/stringr_workshop.Rmd))
+Access the exercises using this link: ([.html](https://rawcdn.githack.com/intro-to-data-science-21-workshop/06-KaiFoerster-string_manipulation/9797721fba47da222244a17a8b2e57d54b4aaee9/stringr_workshop.html) | [.Rmd](https://github.com/intro-to-data-science-21-workshop/06-KaiFoerster-string_manipulation/blob/main/stringr_workshop.Rmd))
 
 
 ## Instructors
