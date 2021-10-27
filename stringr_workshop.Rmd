@@ -1,6 +1,5 @@
 ---
-title: "Stringr Workshop"
-subtitle: "String Manipulation using stringR (Kai Foerster & Max Eckert)"
+title: "String manipulation using stringr - Workshop"
 output: 
   html_document:
     toc: TRUE
