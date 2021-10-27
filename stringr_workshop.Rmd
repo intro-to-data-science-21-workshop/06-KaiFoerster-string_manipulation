@@ -211,4 +211,6 @@ top5words
 
 2.) What was the average length of headlines that day? 
 
+3.) Assign https://www.foxnews.com/, https://www.bbc.com/, https://www.bbc.com/, https://www.dailymail.co.uk/home/index.html
+
 
