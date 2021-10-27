@@ -1,6 +1,6 @@
 ---
 title: "Stringr Workshop"
-subtitle: "String Manipulation using stringR"
+subtitle: "String Manipulation using stringR (Kai Förster & Max Eckert)"
 output: 
   html_document:
     toc: TRUE
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 ***
 <center>
-![What working with strings can feel like](pics/why-cant-you-just-be-normal.gif){width=300px}
+![What working with strings can feel like](pics/why-cant-you-just-be-normal.gif){width=350px}
 </center>
 
 <br>
@@ -29,7 +29,7 @@ Strings! Numeric value's unruly, difficult, unpopular cousin? We think not! Stri
 <br>
 
 <center>
-![StringR to the rescue](pics/Meme_stringR_girl.jpg){width=300px}
+![StringR to the rescue](pics/Meme_stringR_girl.jpg){width=350px}
 </center>
 
 
@@ -48,7 +48,9 @@ In the following document, we want to walk you through the following key functio
 * Manipulating and mutating strings
 
 
-## Scraping data from the Guardian website
+## Demonstration
+
+### Scraping data from the Guardian website
 
 First, let's load the necessary packages we'll need for this exercise:
 ```{r include = TRUE}
@@ -71,7 +73,7 @@ rvest::html_nodes(xpath = '//a[contains(concat( " ", @class, " " ), concat( " ",
 guardian_headlines[c(1:5)]
 ```
 
-## Splitting, subsetting and joining strings
+### Splitting, subsetting and joining strings
 
 Nice! What if we wanted to access the headlines of the following day?
 Let's take a moment and think about the logic behind the URL:
@@ -131,8 +133,8 @@ rvest::html_nodes(xpath = '//a[contains(concat( " ", @class, " " ), concat( " ",
 guardian_headlines_new[c(1:5)]
 ```
 
-## Managing length and order of strings
-Now that we now how to retrieve headlines, let us have a look at the headlines we got for 1 Septemeber. First, we might be interested to order them alphabetically. We can use str_sort for this.
+### Managing length and order of strings
+Now that we now how to retrieve headlines, let us have a look at the headlines we got for 1 September. First, we might be interested to order them alphabetically. We can use str_sort for this.
 
 ```{r}
 str_sort(guardian_headlines)
@@ -153,7 +155,7 @@ Finally, we might also be interested in finding out how many characters each hea
 str_length(guardian_headlines)
 ```
 
-## Manipulating and mutating strings
+### Manipulating and mutating strings
 
 Next, we want to process the headlines, so that we can analyse the words in the headlines properly. First we want to make sure that our list of headlines does not include duplicates. We can eliminate duplicates with "unique". FYI: If we wanted to duplicate strings we can use str_dup, specifying the number of repetition in the second argument
 
@@ -205,12 +207,14 @@ top5words <- tibble(nouns)%>%
 top5words
 ```
 
-## Ideas for assignments during the live coding session:
+## Small Assignments for Further Practice
 
-1.) Scrape the newspaper articles on the date of your most recent birthday. What were the most common nouns?
+1. Scrape the newspaper articles on the date of your most recent birthday. What were the most common nouns?
 
-2.) What was the average length of headlines that day? 
-
-3.) Assign https://www.foxnews.com/, https://www.bbc.com/, https://www.bbc.com/, https://www.dailymail.co.uk/home/index.html
+2. Compare two or more of the following news outlets' headlines. Which one has the longest average headlines on that day?
+  + https://www.foxnews.com/(https://web.archive.org/web/20211027054620/https://www.foxnews.com/)
+  + https://www.bbc.com/(https://web.archive.org/web/20211026203835/https://www.bbc.com/)
+  + https://www.dailymail.co.uk/home/index.html(https://web.archive.org/web/20211027065717/https://www.dailymail.co.uk/home/index.html)
+  
 
 

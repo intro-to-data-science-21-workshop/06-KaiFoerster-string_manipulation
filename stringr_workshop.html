@@ -13,8 +13,8 @@
 
 <title>Stringr Workshop</title>
 
-<script src="stringr_workshop_files/header-attrs-2.8/header-attrs.js"></script>
-<script src="stringr_workshop_files/jquery-1.11.3/jquery.min.js"></script>
+<script src="stringr_workshop_files/header-attrs-2.11/header-attrs.js"></script>
+<script src="stringr_workshop_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="stringr_workshop_files/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="stringr_workshop_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -325,18 +325,18 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Stringr Workshop</h1>
-<h3 class="subtitle">String Manipulation using stringR</h3>
+<h3 class="subtitle">String Manipulation using stringR (Kai Förster &amp; Max Eckert)</h3>
 
 </div>
 
 
 <hr />
 <center>
-<img src="pics/why-cant-you-just-be-normal.gif" title="fig:" width="300" alt="What working with strings can feel like" />
+<img src="pics/why-cant-you-just-be-normal.gif" title="fig:" width="350" alt="What working with strings can feel like" />
 </center>
 <p><br> Strings! Numeric value’s unruly, difficult, unpopular cousin? We think not! String values play not only an important role in data cleaning, but texts itself are increasingly treated as rich sources of data for research in political science and public policy (see here, for example <a href="https://journals.sagepub.com/doi/full/10.1177/20531680211022206" class="uri">https://journals.sagepub.com/doi/full/10.1177/20531680211022206</a>, or here: <a href="https://onlinelibrary.wiley.com/doi/10.1111/padm.12656" class="uri">https://onlinelibrary.wiley.com/doi/10.1111/padm.12656</a>). So today, we want to dive deeper into how to manipulate strings using the stringR package. <br></p>
 <center>
-<img src="pics/Meme_stringR_girl.jpg" title="fig:" width="300" alt="StringR to the rescue" />
+<img src="pics/Meme_stringR_girl.jpg" title="fig:" width="350" alt="StringR to the rescue" />
 </center>
 <div id="a-brief-overview" class="section level2">
 <h2>A Brief Overview</h2>
@@ -352,15 +352,17 @@ div.tocify {
 <li>Manipulating and mutating strings</li>
 </ul>
 </div>
-<div id="scraping-data-from-the-guardian-website" class="section level2">
-<h2>Scraping data from the Guardian website</h2>
+<div id="demonstration" class="section level2">
+<h2>Demonstration</h2>
+<div id="scraping-data-from-the-guardian-website" class="section level3">
+<h3>Scraping data from the Guardian website</h3>
 <p>First, let’s load the necessary packages we’ll need for this exercise:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
-<pre><code>## v ggplot2 3.3.3     v purrr   0.3.4
-## v tibble  3.1.2     v dplyr   1.0.6
+<pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.4     v dplyr   1.0.7
 ## v tidyr   1.1.3     v stringr 1.4.0
-## v readr   1.4.0     v forcats 0.5.1</code></pre>
+## v readr   2.0.1     v forcats 0.5.1</code></pre>
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
@@ -378,8 +380,8 @@ div.tocify {
 ## [4] &quot;Father seeking $2m before stepping down as conservator, court filing claims&quot;
 ## [5] &quot;Up to half of world’s wild tree species could be at risk of extinction&quot;</code></pre>
 </div>
-<div id="splitting-subsetting-and-joining-strings" class="section level2">
-<h2>Splitting, subsetting and joining strings</h2>
+<div id="splitting-subsetting-and-joining-strings" class="section level3">
+<h3>Splitting, subsetting and joining strings</h3>
 <p>Nice! What if we wanted to access the headlines of the following day? Let’s take a moment and think about the logic behind the URL: <br> <a href="https://web.archive.org/web/20210901040912/https://www.theguardian.com/international" class="uri">https://web.archive.org/web/20210901040912/https://www.theguardian.com/international</a> <br> We have the Internet Archive “…/web” followed by a time stamp, and the URL of our news source. Let’s split up the string with str_split into the base part of the url which we call url_archive and the changing part of the url including the date and news source. str_split splits the string into substrings where the splitting pattern occurs and returns a list of substrings. Here we want to split after “web/”, so let us make this our splitting pattern.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>guardian_split <span class="ot">&lt;-</span> guardian_url <span class="sc">%&gt;%</span> <span class="fu">str_split</span>(<span class="at">pattern =</span> <span class="st">&quot;web/&quot;</span>) </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>guardian_split</span></code></pre></div>
@@ -426,8 +428,8 @@ div.tocify {
 ## [4] &quot;Joe Rogan has the virus – and his treatment will make health experts feel ill&quot;
 ## [5] &quot;Site bans Covid misinformation forum after ‘go dark’ protest&quot;</code></pre>
 </div>
-<div id="managing-length-and-order-of-strings" class="section level2">
-<h2>Managing length and order of strings</h2>
+<div id="managing-length-and-order-of-strings" class="section level3">
+<h3>Managing length and order of strings</h3>
 <p>Now that we now how to retrieve headlines, let us have a look at the headlines we got for 1 Septemeber. First, we might be interested to order them alphabetically. We can use str_sort for this.</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sort</span>(guardian_headlines)</span></code></pre></div>
 <pre><code>##  [1] &quot; More from the series &quot;                                                                   
@@ -567,8 +569,8 @@ div.tocify {
 ## [51] 61 49 53 26 53 67 47 48 77 56 67 54 33 46 50 41 63 23 74 53 73 89 36 37 55
 ## [76] 64 58 36 24 29 33 74 66 66 79 82 47 85 76 67 68</code></pre>
 </div>
-<div id="manipulating-and-mutating-strings" class="section level2">
-<h2>Manipulating and mutating strings</h2>
+<div id="manipulating-and-mutating-strings" class="section level3">
+<h3>Manipulating and mutating strings</h3>
 <p>Next, we want to process the headlines, so that we can analyse the words in the headlines properly. First we want to make sure that our list of headlines does not include duplicates. We can eliminate duplicates with “unique”. FYI: If we wanted to duplicate strings we can use str_dup, specifying the number of repetition in the second argument</p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>guardian_headlines <span class="ot">&lt;-</span> <span class="fu">unique</span>(guardian_headlines)</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>headlines_triple <span class="ot">&lt;-</span> <span class="fu">str_dup</span>(guardian_headlines[<span class="dv">1</span>], <span class="at">times =</span> <span class="dv">3</span>)</span>
@@ -671,6 +673,19 @@ div.tocify {
   </script>
 </div>
 </div>
+</div>
+<div id="small-assignments-for-further-practice" class="section level2">
+<h2>Small Assignments for Further Practice</h2>
+<ol style="list-style-type: decimal">
+<li><p>Scrape the newspaper articles on the date of your most recent birthday. What were the most common nouns?</p></li>
+<li><p>Compare two or more of the following news outlets’ headlines. Which one has the longest average headlines on that day?</p></li>
+</ol>
+<ul>
+<li><a href="https://www.foxnews.com/\(https://web.archive.org/web/20211027054620/https://www.foxnews.com/" class="uri">https://www.foxnews.com/\(https://web.archive.org/web/20211027054620/https://www.foxnews.com/</a>)</li>
+<li><a href="https://www.bbc.com/\(https://web.archive.org/web/20211026203835/https://www.bbc.com/" class="uri">https://www.bbc.com/\(https://web.archive.org/web/20211026203835/https://www.bbc.com/</a>)</li>
+<li><a href="https://www.dailymail.co.uk/home/index.html\(https://web.archive.org/web/20211027065717/https://www.dailymail.co.uk/home/index.html" class="uri">https://www.dailymail.co.uk/home/index.html\(https://web.archive.org/web/20211027065717/https://www.dailymail.co.uk/home/index.html</a>)</li>
+</ul>
+</div>
 
 &nbsp;
 <hr />
@@ -725,6 +740,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')
