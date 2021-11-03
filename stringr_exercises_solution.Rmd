@@ -1,0 +1,74 @@
+---
+title: "string_manipulation_exercise_solution"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(stringr)
+library(xml2)
+```
+
+##Scraping the Guardian headlines for Kai's birthday
+
+###(January 28, 2021, mark your calendars!)
+
+Using the str_replace function, we are replacing the old timestamp "20210901" with "20210128", as follows:
+
+```{r}
+guardian_url <- "https://web.archive.org/web/20210901040912/https://www.theguardian.com/international"
+guardian_url_kai <- str_replace(guardian_url, "20210901", "20210128")
+guardian_url_kai
+```
+
+We plug in the new link into the webscraping syntax to extract the headlines:
+
+```{r}
+guardian_headlines <- guardian_url_kai %>% read_html() %>% 
+rvest::html_nodes(xpath = '//a[contains(concat( " ", @class, " " ), concat( " ", "js-headline-text", " " ))]') %>% rvest::html_text()
+guardian_headlines[c(1:5)]
+```
+##Scraping Fox News Headlines
+
+Now, let's look at another news source, e.g. Fox News. I have prepared the link and xpath (using selector gadget) below:
+
+```{r}
+fox_url <- "https://web.archive.org/web/20211103063533/https://www.foxnews.com/"
+fox_url
+fox_headlines <- fox_url %>% read_html() %>% 
+rvest::html_nodes(xpath = '//*[contains(concat( " ", @class, " " ), concat( " ", "title", " " ))]') %>% rvest::html_text()
+fox_headlines[c(1:5)]
+```
+```{r}
+fox_headlines <- unique(fox_headlines)
+fox_headlines <- str_trim(fox_headlines)
+fox_headlines[c(1:10)]
+```
+Number of headlines:
+
+```{r}
+number_headlines <- length(fox_headlines)
+number_headlines
+```
+
+Now, we are number of characters per headline:
+
+```{r}
+fox_length <- str_length(fox_headlines)
+fox_length[c(1:10)]
+```
+Number of characters in all 209 headlines:
+
+```{r}
+headlines_length <- sum(fox_length)
+headlines_length
+```
+Number of characters in headlines divided by number of headlines
+
+```{r}
+average_length <- headlines_length/number_headlines
+as.integer(average_length)
+```
