@@ -1,6 +1,18 @@
 ---
-title: "string_manipulation_exercise_solution"
-output: html_document
+title: "String manipulation using stringr - Exercise Solutions"
+output: 
+  html_document:
+    toc: TRUE
+    df_print: paged
+    number_sections: FALSE
+    highlight: tango
+    theme: lumen 
+    toc_depth: 3
+    toc_float: true
+    css: custom.css 
+    self_contained: false
+    includes:
+      after_body: footer.html
 ---
 
 ```{r setup, include=FALSE}
@@ -12,9 +24,9 @@ library(stringr)
 library(xml2)
 ```
 
-##Scraping the Guardian headlines for Kai's birthday
+## Scraping the Guardian headlines for Kai's birthday
 
-###(January 28, 2021, mark your calendars!)
+### (January 28, 2021, mark your calendars!)
 
 Using the str_replace function, we are replacing the old timestamp "20210901" with "20210128", as follows:
 
@@ -31,7 +43,7 @@ guardian_headlines <- guardian_url_kai %>% read_html() %>%
 rvest::html_nodes(xpath = '//a[contains(concat( " ", @class, " " ), concat( " ", "js-headline-text", " " ))]') %>% rvest::html_text()
 guardian_headlines[c(1:5)]
 ```
-##Scraping Fox News Headlines
+### Scraping Fox News Headlines
 
 Now, let's look at another news source, e.g. Fox News. I have prepared the link and xpath (using selector gadget) below:
 
@@ -47,26 +59,28 @@ fox_headlines <- unique(fox_headlines)
 fox_headlines <- str_trim(fox_headlines)
 fox_headlines[c(1:10)]
 ```
-Number of headlines:
+## Analysis of Fox News Headlines
+
+### Number of headlines:
 
 ```{r}
 number_headlines <- length(fox_headlines)
 number_headlines
 ```
 
-Now, we are number of characters per headline:
+### Number of characters per headline:
 
 ```{r}
 fox_length <- str_length(fox_headlines)
 fox_length[c(1:10)]
 ```
-Number of characters in all 209 headlines:
+### Number of characters in all 209 headlines:
 
 ```{r}
 headlines_length <- sum(fox_length)
 headlines_length
 ```
-Number of characters in headlines divided by number of headlines
+### Number of characters in headlines divided by number of headlines
 
 ```{r}
 average_length <- headlines_length/number_headlines
